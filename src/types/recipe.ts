@@ -1,23 +1,10 @@
+// Add to existing types
 export interface Recipe {
-  id: number;
+  id: string;
   title: string;
   image: string;
   readyInMinutes: number;
   servings: number;
-  nutrition: {
-    nutrients: {
-      name: string;
-      amount: number;
-      unit: string;
-    }[];
-  };
-  instructions: string;
-  extendedIngredients: {
-    id: number;
-    original: string;
-    amount: number;
-    unit: string;
-  }[];
   prepTimeMinutes: number;
   cookTimeMinutes: number;
   totalTimeMinutes: number;
@@ -25,47 +12,29 @@ export interface Recipe {
   isVegetarian: boolean;
   isGlutenFree: boolean;
   isDairyFree: boolean;
-  mealType: 'breakfast' | 'lunch' | 'dinner';
+  mealType: string;
   caloriesPerServing: number;
   proteinPerServing: number;
   carbsPerServing: number;
   fatPerServing: number;
   fiberPerServing: number;
-  storageInstructions: string;
-  shelfLifeDays: number;
-}
-
-export interface RecipeFilters {
-  ingredients: string[];
-  minProtein?: number;
-  maxCalories?: number;
-  diet?: string;
-}
-
-export interface Ingredient {
-  name: string;
-  category: string;
-  unit: string;
-  aliases: string[];
-}
-
-export interface AutocompleteState {
-  isOpen: boolean;
-  highlightedIndex: number;
-  inputValue: string;
-  selectedIngredients: string[];
-}
-
-export interface RecipeInstruction {
-  id: string;
-  recipeId: string;
-  stepNumber: number;
-  instruction: string;
-}
-
-export interface RecipeStorage {
-  id: string;
-  recipeId: string;
-  storageInstructions: string;
-  shelfLifeDays: number;
+  instructions: string;
+  avgRating?: number;
+  reviewCount: number;
+  nutrition: {
+    nutrients: Array<{
+      name: string;
+      amount: number;
+      unit: string;
+    }>;
+  };
+  extendedIngredients: Array<{
+    id: string;
+    original: string;
+    amount: number;
+    unit: string;
+  }>;
+  proteinRatio: number;
+  version: number;
+  status: 'draft' | 'published' | 'archived';
 }
