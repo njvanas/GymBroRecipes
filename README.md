@@ -8,19 +8,6 @@
 <p align="center">
   <strong>Your go-to fitness companion for discovering, sharing, and tracking healthy, protein-packed recipes.</strong>
 </p>
-
-<p align="center">
-  <a href="https://github.com/njvanas/GymBroRecipes/issues">
-    <img src="https://img.shields.io/github/issues/njvanas/GymBroRecipes" alt="Issues" />
-  </a>
-  <a href="https://github.com/njvanas/GymBroRecipes/pulls">
-    <img src="https://img.shields.io/github/issues-pr/njvanas/GymBroRecipes" alt="Pull Requests" />
-  </a>
-  <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/njvanas/GymBroRecipes.svg" alt="License: MIT" />
-  </a>
-</p>
-
 ---
 
 ## Table of Contents
