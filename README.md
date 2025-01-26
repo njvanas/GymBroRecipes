@@ -9,6 +9,10 @@
   <strong>Your go-to fitness companion for discovering, sharing, and tracking healthy, protein-packed recipes.</strong>
 </p>
 
+
+---
+
+
 ## Table of Contents
 
 - [Introduction](#introduction)
