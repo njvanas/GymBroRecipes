@@ -2,7 +2,7 @@
 
 <p align="center">
   <!-- Replace with your own logo if available -->
-  <img src="https://gymbrorecipes.netlify.app/logo.jpg" alt="GymBroRecipes Logo" width="150" />
+  <img src="https://gymbrorecipes.netlify.app/logo.png" alt="GymBroRecipes Logo" width="150" />
 </p>
 
 <p align="center">
