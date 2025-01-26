@@ -2,7 +2,7 @@
 
 <p align="center">
   <!-- Replace with your own logo if available -->
-  <img src="https://user-images.githubusercontent.com/placeholder/recipe_logo.png" alt="GymBroRecipes Logo" width="150" />
+  <img src="https://gymbrorecipes.netlify.app/logo.jpg" alt="GymBroRecipes Logo" width="150" />
 </p>
 
 <p align="center">
@@ -57,7 +57,7 @@
 
 <p align="center">
   <!-- Replace with an actual screenshot if available -->
-  <img src="https://user-images.githubusercontent.com/placeholder/recipe_screenshot.png" alt="GymBroRecipes Dashboard" width="600" />
+  <img src="https://gymbrorecipes.netlify.app/bro.jpg" alt="GymBroRecipes Dashboard" width="600" />
 </p>
 
 _Example screenshot demonstrating the recipe dashboard and nutritional breakdown._
