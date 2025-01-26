@@ -60,4 +60,9 @@
   <img src="https://gymbrorecipes.netlify.app/bro.jpg" alt="GymBroRecipes Dashboard" width="600" />
 </p>
 
+<p align="center">
+  <!-- Replace with an actual screenshot if available -->
+  <img src="https://gymbrorecipes.netlify.app/bro1.jpg" alt="GymBroRecipes Detailed View" width="600" />
+</p>
+
 _Example screenshot demonstrating the recipe dashboard and nutritional breakdown._
