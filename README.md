@@ -9,6 +9,8 @@
   <strong>Your go-to fitness companion for discovering, sharing, and tracking healthy, protein-packed recipes.</strong>
 </p>
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/46667545-61dd-42a9-94f8-e7a308c04d33/deploy-status)](https://app.netlify.com/sites/gymbrorecipes/deploys)
+
 
 ---
 
