@@ -95,7 +95,9 @@ const BodyMetrics = () => {
 
   return (
     <div className="max-w-xl mx-auto space-y-4 text-gray-300">
-      <h2 className="text-2xl font-semibold text-white">Body Metrics</h2>
+      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 text-center">
+        Body Metrics
+      </h2>
 
       <div className="grid grid-cols-2 gap-2">
         <input

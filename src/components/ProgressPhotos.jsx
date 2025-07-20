@@ -68,7 +68,9 @@ const ProgressPhotos = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Progress Photos</h2>
+      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 text-center">
+        Progress Photos
+      </h2>
       <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} />
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {photos.map((p) => {
