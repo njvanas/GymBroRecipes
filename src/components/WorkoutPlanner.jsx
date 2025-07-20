@@ -5,6 +5,7 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Label from './ui/Label';
 import { Card, CardHeader, CardContent } from './ui/Card';
+import TrainingMetrics from './TrainingMetrics';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -201,6 +202,8 @@ const WorkoutPlanner = () => {
           </CardContent>
         </Card>
       )}
+
+      <TrainingMetrics exercises={exercises} />
 
       <Button
         className="bg-green-500 hover:bg-green-600 mt-4"
