@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { get, set } from 'idb-keyval';
 import { createClient } from '@supabase/supabase-js';
+import Button from './ui/Button';
+import Input from './ui/Input';
+import Label from './ui/Label';
+import { Card, CardHeader, CardContent } from './ui/Card';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -99,108 +103,113 @@ const WorkoutPlanner = () => {
   };
 
   return (
-    <div>
-      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 text-center">
-        Workout Planner
-      </h2>
+    <div className="space-y-4">
+      <h1 className="text-3xl font-bold md:text-4xl text-center">Workout Planner</h1>
 
-      <div className="space-y-2 mb-6">
-        <div>
-          <label className="block text-sm font-medium mb-1">Exercise</label>
-          <select
-            className="w-full border rounded p-2"
-            value={selectedExercise}
-            onChange={(e) => setSelectedExercise(e.target.value)}
-          >
-            {exercisesList.map((ex) => (
-              <option key={ex} value={ex}>
-                {ex}
-              </option>
-            ))}
-          </select>
-        </div>
+      <Card className="mt-4">
+        <CardContent className="space-y-2">
+          <div>
+            <Label htmlFor="exercise">Exercise</Label>
+            <select
+              id="exercise"
+              className="w-full border rounded p-2 dark:bg-gray-800"
+              value={selectedExercise}
+              onChange={(e) => setSelectedExercise(e.target.value)}
+            >
+              {exercisesList.map((ex) => (
+                <option key={ex} value={ex}>
+                  {ex}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="grid grid-cols-4 gap-2">
-          <input
-            type="number"
-            placeholder="Sets"
-            value={sets}
-            onChange={(e) => setSets(e.target.value)}
-            className="border rounded p-2"
-          />
-          <input
-            type="number"
-            placeholder="Reps"
-            value={reps}
-            onChange={(e) => setReps(e.target.value)}
-            className="border rounded p-2"
-          />
-          <input
-            type="number"
-            placeholder="Weight"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-            className="border rounded p-2"
-          />
-          <input
-            type="number"
-            placeholder="RPE"
-            value={rpe}
-            onChange={(e) => setRpe(e.target.value)}
-            className="border rounded p-2"
-          />
-        </div>
+          <div className="grid grid-cols-4 gap-2">
+            <Input
+              type="number"
+              aria-label="Sets"
+              placeholder="Sets"
+              value={sets}
+              onChange={(e) => setSets(e.target.value)}
+            />
+            <Input
+              type="number"
+              aria-label="Reps"
+              placeholder="Reps"
+              value={reps}
+              onChange={(e) => setReps(e.target.value)}
+            />
+            <Input
+              type="number"
+              aria-label="Weight"
+              placeholder="Weight"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+            />
+            <Input
+              type="number"
+              aria-label="RPE"
+              placeholder="RPE"
+              value={rpe}
+              onChange={(e) => setRpe(e.target.value)}
+            />
+          </div>
 
-        <button
-          className="bg-blue-500 text-white rounded px-4 py-2 w-full"
-          onClick={addExercise}
-        >
-          {editIndex !== null ? 'Update Exercise' : 'Add Exercise'}
-        </button>
-      </div>
+          <Button className="w-full" onClick={addExercise} aria-label="Add Exercise">
+            {editIndex !== null ? 'Update Exercise' : 'Add Exercise'}
+          </Button>
+        </CardContent>
+      </Card>
 
       {exercises.length > 0 && (
-        <div className="mb-6">
-          <h3 className="font-medium mb-2">Workout Log</h3>
-          <ul className="space-y-2">
-            {exercises.map((ex, idx) => (
-              <li
-                key={idx}
-                className="flex justify-between items-center bg-gray-50 p-2 rounded"
-              >
-                <div>
-                  <p className="font-semibold">{ex.exercise}</p>
-                  <p className="text-sm text-gray-600">
-                    Sets: {ex.sets} Reps: {ex.reps} Weight: {ex.weight} RPE: {ex.rpe}
-                  </p>
-                </div>
-                <div className="space-x-2">
-                  <button
-                    className="text-blue-600"
-                    onClick={() => handleEdit(idx)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="text-red-600"
-                    onClick={() => handleRemove(idx)}
-                  >
-                    Remove
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Card className="mt-4">
+          <CardHeader>
+            <h2 className="text-xl font-semibold md:text-2xl">Workout Log</h2>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {exercises.map((ex, idx) => (
+                <li
+                  key={idx}
+                  className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-2 rounded"
+                >
+                  <div>
+                    <p className="font-semibold">{ex.exercise}</p>
+                    <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
+                      Sets: {ex.sets} Reps: {ex.reps} Weight: {ex.weight} RPE: {ex.rpe}
+                    </p>
+                  </div>
+                  <div className="space-x-2">
+                    <Button
+                      className="bg-transparent text-blue-600 hover:underline px-2 py-1"
+                      onClick={() => handleEdit(idx)}
+                      aria-label="Edit exercise"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      className="bg-transparent text-red-600 hover:underline px-2 py-1"
+                      onClick={() => handleRemove(idx)}
+                      aria-label="Remove exercise"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       )}
 
-      <button
-        className="bg-green-500 text-white rounded px-4 py-2"
+      <Button
+        className="bg-green-500 hover:bg-green-600 mt-4"
         onClick={saveWorkout}
         disabled={!exercises.length}
+        aria-label="Save Workout"
       >
         Save Workout
-      </button>
+      </Button>
     </div>
   );
 };

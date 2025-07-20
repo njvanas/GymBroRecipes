@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { get, set } from 'idb-keyval';
 import { createClient } from '@supabase/supabase-js';
+import Button from './ui/Button';
+import Input from './ui/Input';
+import Label from './ui/Label';
+import { Card, CardHeader, CardContent } from './ui/Card';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -92,105 +96,112 @@ const NutritionTracker = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto space-y-4 dark:text-white">
-      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 text-center">
-        Nutrition Tracker
-      </h2>
-      <div className="grid grid-cols-5 gap-2">
-        <input
-          type="text"
-          placeholder="Meal"
-          value={mealName}
-          onChange={(e) => setMealName(e.target.value)}
-          className="border rounded p-2 col-span-2 dark:bg-gray-800"
-        />
-        <input
-          type="number"
-          placeholder="Cal"
-          value={calories}
-          onChange={(e) => setCalories(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
-        />
-        <input
-          type="number"
-          placeholder="Protein"
-          value={protein}
-          onChange={(e) => setProtein(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
-        />
-        <input
-          type="number"
-          placeholder="Carbs"
-          value={carbs}
-          onChange={(e) => setCarbs(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
-        />
-        <input
-          type="number"
-          placeholder="Fats"
-          value={fats}
-          onChange={(e) => setFats(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
-        />
-      </div>
-      <button
-        className="bg-blue-500 text-white rounded px-4 py-2 w-full"
-        onClick={addMeal}
-        disabled={!mealName}
-      >
+    <div className="max-w-xl mx-auto space-y-4">
+      <h1 className="text-3xl font-bold md:text-4xl text-center">Nutrition Tracker</h1>
+      <Card className="mt-4">
+        <CardContent className="grid grid-cols-5 gap-2">
+          <Input
+            type="text"
+            aria-label="Meal"
+            placeholder="Meal"
+            value={mealName}
+            onChange={(e) => setMealName(e.target.value)}
+            className="col-span-2"
+          />
+          <Input
+            type="number"
+            aria-label="Calories"
+            placeholder="Cal"
+            value={calories}
+            onChange={(e) => setCalories(e.target.value)}
+          />
+          <Input
+            type="number"
+            aria-label="Protein"
+            placeholder="Protein"
+            value={protein}
+            onChange={(e) => setProtein(e.target.value)}
+          />
+          <Input
+            type="number"
+            aria-label="Carbs"
+            placeholder="Carbs"
+            value={carbs}
+            onChange={(e) => setCarbs(e.target.value)}
+          />
+          <Input
+            type="number"
+            aria-label="Fats"
+            placeholder="Fats"
+            value={fats}
+            onChange={(e) => setFats(e.target.value)}
+          />
+        </CardContent>
+      </Card>
+      <Button className="w-full" onClick={addMeal} disabled={!mealName} aria-label="Add Meal">
         Add Meal
-      </button>
+      </Button>
 
       {meals.length > 0 && (
-        <div className="space-y-2">
-          <h3 className="font-medium">Today's Meals</h3>
-          <ul className="space-y-1">
-            {meals.map((meal, idx) => (
-              <li
-                key={idx}
-                className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-2 rounded"
-              >
-                <div>
-                  <p className="font-semibold">{meal.name}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {meal.calories} kcal | P {meal.protein} | C {meal.carbs} | F {meal.fats}
-                  </p>
-                </div>
-                <button
-                  className="text-red-600 dark:text-red-400"
-                  onClick={() => removeMeal(idx)}
+        <Card className="mt-4">
+          <CardHeader>
+            <h2 className="text-xl font-semibold md:text-2xl">Today's Meals</h2>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-1">
+              {meals.map((meal, idx) => (
+                <li
+                  key={idx}
+                  className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-2 rounded"
                 >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+                  <div>
+                    <p className="font-semibold">{meal.name}</p>
+                    <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
+                      {meal.calories} kcal | P {meal.protein} | C {meal.carbs} | F {meal.fats}
+                    </p>
+                  </div>
+                  <Button
+                    className="bg-transparent text-red-600 dark:text-red-400 hover:underline px-2 py-1"
+                    onClick={() => removeMeal(idx)}
+                    aria-label="Remove meal"
+                  >
+                    Remove
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       )}
 
-      <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded">
-        <h3 className="font-medium mb-2">Daily Totals</h3>
-        <p>
-          Calories: {totals.calories}/{TARGETS.calories}
-        </p>
-        <p>
-          Protein: {totals.protein}g/{TARGETS.protein}g
-        </p>
-        <p>
-          Carbs: {totals.carbs}g/{TARGETS.carbs}g
-        </p>
-        <p>
-          Fats: {totals.fats}g/{TARGETS.fats}g
-        </p>
-      </div>
+      <Card className="mt-4">
+        <CardHeader>
+          <h2 className="text-xl font-semibold md:text-2xl">Daily Totals</h2>
+        </CardHeader>
+        <CardContent>
+          <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
+            Calories: {totals.calories}/{TARGETS.calories}
+          </p>
+          <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
+            Protein: {totals.protein}g/{TARGETS.protein}g
+          </p>
+          <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
+            Carbs: {totals.carbs}g/{TARGETS.carbs}g
+          </p>
+          <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
+            Fats: {totals.fats}g/{TARGETS.fats}g
+          </p>
+        </CardContent>
+      </Card>
 
-      <button
-        className="bg-green-500 text-white rounded px-4 py-2 w-full"
+      <Button
+        className="bg-green-500 hover:bg-green-600 mt-4 w-full"
         onClick={saveLogs}
         disabled={!meals.length}
+        aria-label="Save Log"
       >
         Save Log
-      </button>
+      </Button>
     </div>
   );
 };
