@@ -31,7 +31,7 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <div className="min-h-screen flex flex-col">
         <header className="sticky top-0 z-10 bg-slate-900/50 backdrop-blur">
           <div className="container mx-auto px-6 py-4 flex justify-between items-center">
