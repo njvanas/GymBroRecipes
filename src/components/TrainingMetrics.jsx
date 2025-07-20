@@ -27,7 +27,6 @@ const TrainingMetrics = ({ exercises = [] }) => {
     exercises.reduce((acc, ex) => acc + (Number(ex.rpe) || 0), 0) /
     exercises.length
   ).toFixed(1);
-
   return (
     <Card className="mt-4">
       <CardHeader>
