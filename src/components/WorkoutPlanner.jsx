@@ -21,7 +21,13 @@ export default function WorkoutPlanner({ user }) {
   const [editIndex, setEditIndex] = useState(null);
 
   const handleAddExercise = () => {
-    const ex = { exercise, sets, reps, weight, rpe };
+    const ex = {
+      exercise,
+      sets: parseInt(sets, 10) || 0,
+      reps: parseInt(reps, 10) || 0,
+      weight: parseFloat(weight) || 0,
+      rpe: parseFloat(rpe) || 0,
+    };
     if (editIndex !== null) {
       const updated = [...workoutExercises];
       updated[editIndex] = ex;
@@ -39,10 +45,10 @@ export default function WorkoutPlanner({ user }) {
   const handleEdit = (index) => {
     const ex = workoutExercises[index];
     setExercise(ex.exercise);
-    setSets(ex.sets);
-    setReps(ex.reps);
-    setWeight(ex.weight);
-    setRpe(ex.rpe);
+    setSets(String(ex.sets));
+    setReps(String(ex.reps));
+    setWeight(String(ex.weight));
+    setRpe(String(ex.rpe));
     setEditIndex(index);
   };
 
