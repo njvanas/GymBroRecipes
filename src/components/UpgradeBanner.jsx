@@ -22,18 +22,18 @@ const UpgradeBanner = () => {
   if (!visible) return null;
 
   return (
-    <div className="bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 p-4 text-center">
+    <div className="bg-blue-600/20 text-blue-400 p-4 text-center">
       <p className="mb-2">Upgrade to enable cloud sync and automatic backups.</p>
       <div className="space-x-2">
         <button
           onClick={handleUpgrade}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded"
+          className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-300 shadow-lg hover:shadow-xl"
         >
           Upgrade Now
         </button>
         <button
           onClick={() => setVisible(false)}
-          className="text-sm underline text-gray-700 dark:text-gray-300"
+          className="text-sm underline text-gray-300"
         >
           Dismiss
         </button>

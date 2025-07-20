@@ -28,20 +28,22 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
-        <header className="bg-blue-600 text-white p-4 flex justify-between items-center">
-          <h1 className="text-lg font-bold">GymBroRecipes</h1>
-          <nav className="space-x-4">
-            <Link className="hover:underline" to="/">Home</Link>
-            <Link className="hover:underline" to="/workout">Workouts</Link>
-            <Link className="hover:underline" to="/nutrition">Nutrition</Link>
-            <Link className="hover:underline" to="/metrics">Metrics</Link>
-            <Link className="hover:underline" to="/photos">Photos</Link>
-          </nav>
+        <header className="sticky top-0 z-10 bg-slate-900/50 backdrop-blur">
+          <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-white">GymBroRecipes</h1>
+            <nav className="space-x-4">
+              <Link className="text-gray-300 hover:text-blue-400 transition-colors duration-300" to="/">Home</Link>
+              <Link className="text-gray-300 hover:text-blue-400 transition-colors duration-300" to="/workout">Workouts</Link>
+              <Link className="text-gray-300 hover:text-blue-400 transition-colors duration-300" to="/nutrition">Nutrition</Link>
+              <Link className="text-gray-300 hover:text-blue-400 transition-colors duration-300" to="/metrics">Metrics</Link>
+              <Link className="text-gray-300 hover:text-blue-400 transition-colors duration-300" to="/photos">Photos</Link>
+            </nav>
+          </div>
         </header>
 
         <UpgradeBanner />
 
-        <main className="flex-1 p-4">
+        <main className="flex-1 container mx-auto px-6 py-10">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/workout" element={<WorkoutPlanner />} />
@@ -51,7 +53,7 @@ function App() {
           </Routes>
         </main>
 
-        <footer className="bg-gray-100 text-center p-4 text-sm">
+        <footer className="bg-slate-900/50 text-gray-400 text-center py-4">
           &copy; {new Date().getFullYear()} GymBroRecipes
         </footer>
       </div>
