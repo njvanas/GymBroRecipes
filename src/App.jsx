@@ -5,6 +5,7 @@ import Home from './components/Home';
 import WorkoutPlanner from './components/WorkoutPlanner';
 import NutritionTracker from './components/NutritionTracker';
 import BodyMetrics from './components/BodyMetrics';
+import ProgressPhotos from './components/ProgressPhotos';
 import UpgradeBanner from './components/UpgradeBanner';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
             <Link className="hover:underline" to="/workout">Workouts</Link>
             <Link className="hover:underline" to="/nutrition">Nutrition</Link>
             <Link className="hover:underline" to="/metrics">Metrics</Link>
+            <Link className="hover:underline" to="/photos">Photos</Link>
           </nav>
         </header>
 
@@ -45,6 +47,7 @@ function App() {
             <Route path="/workout" element={<WorkoutPlanner />} />
             <Route path="/nutrition" element={<NutritionTracker />} />
             <Route path="/metrics" element={<BodyMetrics />} />
+            <Route path="/photos" element={<ProgressPhotos />} />
           </Routes>
         </main>
 
