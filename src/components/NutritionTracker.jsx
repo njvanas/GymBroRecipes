@@ -5,6 +5,7 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Label from './ui/Label';
 import { Card, CardHeader, CardContent } from './ui/Card';
+import FoodSearch from './FoodSearch';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -28,6 +29,7 @@ const NutritionTracker = () => {
   const [carbs, setCarbs] = useState('');
   const [fats, setFats] = useState('');
   const [meals, setMeals] = useState([]);
+  const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
     async function loadUser() {
@@ -55,6 +57,15 @@ const NutritionTracker = () => {
     };
     setMeals([...meals, newMeal]);
     resetForm();
+  };
+
+  const handleSelectFood = (food) => {
+    setMealName(food.name);
+    setCalories(food.calories);
+    setProtein(food.protein);
+    setCarbs(food.carbs);
+    setFats(food.fats);
+    setShowSearch(false);
   };
 
   const removeMeal = (index) => {
@@ -138,9 +149,18 @@ const NutritionTracker = () => {
           />
         </CardContent>
       </Card>
-      <Button className="w-full" onClick={addMeal} disabled={!mealName} aria-label="Add Meal">
-        Add Meal
-      </Button>
+      <div className="flex space-x-2">
+        <Button className="flex-1" onClick={addMeal} disabled={!mealName} aria-label="Add Meal">
+          Add Meal
+        </Button>
+        <Button
+          className="flex-1 bg-gray-600 hover:bg-gray-700"
+          onClick={() => setShowSearch((s) => !s)}
+          aria-label="Search food database"
+        >
+          Search Food
+        </Button>
+      </div>
 
       {meals.length > 0 && (
         <Card className="mt-4">
@@ -173,6 +193,8 @@ const NutritionTracker = () => {
           </CardContent>
         </Card>
       )}
+
+      {showSearch && <FoodSearch onSelect={handleSelectFood} />}
 
       <Card className="mt-4">
         <CardHeader>
