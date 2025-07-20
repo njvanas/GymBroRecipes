@@ -6,6 +6,7 @@ import WorkoutPlanner from './components/WorkoutPlanner';
 import NutritionTracker from './components/NutritionTracker';
 import BodyMetrics from './components/BodyMetrics';
 import ProgressPhotos from './components/ProgressPhotos';
+import Stats from './components/Stats';
 import UpgradeBanner from './components/UpgradeBanner';
 import Link from './components/ui/Link';
 
@@ -42,6 +43,7 @@ function App() {
               <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/nutrition">Nutrition</Link>
               <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/metrics">Metrics</Link>
               <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/photos">Photos</Link>
+              <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/stats">Stats</Link>
             </nav>
           </div>
         </header>
@@ -55,6 +57,7 @@ function App() {
             <Route path="/nutrition" element={<NutritionTracker />} />
             <Route path="/metrics" element={<BodyMetrics />} />
             <Route path="/photos" element={<ProgressPhotos />} />
+            <Route path="/stats" element={<Stats />} />
           </Routes>
         </main>
 

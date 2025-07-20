@@ -6,6 +6,7 @@ import Input from './ui/Input';
 import Label from './ui/Label';
 import { Card, CardHeader, CardContent } from './ui/Card';
 import TrainingMetrics from './TrainingMetrics';
+import ExerciseSearch from './ExerciseSearch';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -31,6 +32,7 @@ const WorkoutPlanner = () => {
   const [rpe, setRpe] = useState('');
   const [exercises, setExercises] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
+  const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
     async function loadUser() {
@@ -47,6 +49,11 @@ const WorkoutPlanner = () => {
     setWeight('');
     setRpe('');
     setEditIndex(null);
+  };
+
+  const handleSelectFromSearch = (exercise) => {
+    setSelectedExercise(exercise.name);
+    setShowSearch(false);
   };
 
   const addExercise = () => {
@@ -159,8 +166,17 @@ const WorkoutPlanner = () => {
           <Button className="w-full" onClick={addExercise} aria-label="Add Exercise">
             {editIndex !== null ? 'Update Exercise' : 'Add Exercise'}
           </Button>
+          <Button
+            className="w-full bg-gray-600 hover:bg-gray-700"
+            onClick={() => setShowSearch((s) => !s)}
+            aria-label="Search exercises"
+          >
+            Search Exercises
+          </Button>
         </CardContent>
       </Card>
+
+      {showSearch && <ExerciseSearch onSelect={handleSelectFromSearch} />}
 
       {exercises.length > 0 && (
         <Card className="mt-4">
