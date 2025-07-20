@@ -37,6 +37,9 @@ If you prefer Netlify, connect the repo in your Netlify dashboard or deploy manu
 ```bash
 netlify deploy --dir=dist --prod
 ```
+Make sure to configure the `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` variables
+in your Netlify environment settings so the frontend can connect to your Supabase
+project after deployment.
 
 ## Privacy & Data Ownership
 All data stays on your device unless you enable cloud sync. There are no analytics or third‑party trackers. You can export or delete your information at any time and you remain the sole owner of your data.
