@@ -76,7 +76,12 @@ const FoodSearch = ({ onSelect }) => {
             ))}
           </ul>
         ) : (
-          !loading && query && <p className="text-gray-500">No results found.</p>
+          !loading &&
+          query && (
+            <p className="text-gray-500" aria-live="polite">
+              No results found.
+            </p>
+          )
         )}
       </CardContent>
     </Card>
