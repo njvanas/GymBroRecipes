@@ -37,7 +37,7 @@ function App() {
           </nav>
         </header>
 
-        {!user.is_paid && <UpgradeBanner />}
+        <UpgradeBanner />
 
         <main className="flex-1 p-4">
           <Routes>
