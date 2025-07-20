@@ -41,6 +41,8 @@ Remember to provide `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` during the 
 3. Netlify uses `netlify.toml` to build and deploy the app. The configuration
    already points at `backend/functions` for serverless functions and publishes
    the `dist` folder.
+   The Vite config automatically detects the `NETLIFY` environment variable so
+   asset paths work correctly when deployed to Netlify.
 4. To preview locally run:
    ```bash
    npm run netlify

@@ -1,13 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+/**
+ * Vite configuration
+ *
+ * The `base` option controls the path prepended to asset URLs in the built
+ * index.html. When deploying to GitHub Pages the site is served from
+ * `https://<user>.github.io/<repo>/` so we need to prefix assets with the repo
+ * name. Netlify, on the other hand, serves the site from the domain root and
+ * requires `base` to be `/`. Netlify automatically sets the `NETLIFY`
+ * environment variable during the build which we can use to switch between the
+ * two.
+ */
 export default defineConfig({
-  // When deploying to GitHub Pages the site will be served from
-  // https://<user>.github.io/<repo>/, so we need to prefix asset URLs
-  // with the repository name. This prevents requests for assets like
-  // /assets/index.js from returning the 404 page (served as text/html)
-  // which caused the "disallowed MIME type" error.
-  base: '/GymBroRecipes/',
+  base: process.env.NETLIFY ? '/' : '/GymBroRecipes/',
   plugins: [react()],
   server: {
     open: true,
