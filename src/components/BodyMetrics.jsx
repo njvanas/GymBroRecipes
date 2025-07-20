@@ -94,8 +94,8 @@ const BodyMetrics = () => {
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
-    <div className="max-w-xl mx-auto space-y-4 dark:text-white">
-      <h2 className="text-xl font-semibold">Body Metrics</h2>
+    <div className="max-w-xl mx-auto space-y-4 text-gray-300">
+      <h2 className="text-2xl font-semibold text-white">Body Metrics</h2>
 
       <div className="grid grid-cols-2 gap-2">
         <input
@@ -103,47 +103,47 @@ const BodyMetrics = () => {
           placeholder="Weight (kg)"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
+          className="border border-slate-600/50 rounded p-2 bg-slate-800/50"
         />
         <input
           type="number"
           placeholder="Body Fat %"
           value={bodyFat}
           onChange={(e) => setBodyFat(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
+          className="border border-slate-600/50 rounded p-2 bg-slate-800/50"
         />
         <input
           type="number"
           placeholder="Chest"
           value={chest}
           onChange={(e) => setChest(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
+          className="border border-slate-600/50 rounded p-2 bg-slate-800/50"
         />
         <input
           type="number"
           placeholder="Waist"
           value={waist}
           onChange={(e) => setWaist(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
+          className="border border-slate-600/50 rounded p-2 bg-slate-800/50"
         />
         <input
           type="number"
           placeholder="Arms"
           value={arms}
           onChange={(e) => setArms(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
+          className="border border-slate-600/50 rounded p-2 bg-slate-800/50"
         />
         <input
           type="number"
           placeholder="Thighs"
           value={thighs}
           onChange={(e) => setThighs(e.target.value)}
-          className="border rounded p-2 dark:bg-gray-800"
+          className="border border-slate-600/50 rounded p-2 bg-slate-800/50"
         />
       </div>
 
       <button
-        className="bg-blue-500 text-white rounded px-4 py-2 w-full"
+        className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-300 shadow-lg hover:shadow-xl w-full"
         onClick={saveEntry}
         disabled={!weight}
       >
@@ -157,7 +157,7 @@ const BodyMetrics = () => {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="border rounded p-1 dark:bg-gray-800"
+              className="border border-slate-600/50 rounded p-1 bg-slate-800/50"
             >
               <option value="all">All</option>
               <option value="7">Last 7 days</option>
@@ -168,7 +168,7 @@ const BodyMetrics = () => {
             {filteredEntries.map((e, idx) => (
               <li
                 key={idx}
-                className="flex justify-between bg-gray-50 dark:bg-gray-700 p-2 rounded"
+                className="flex justify-between bg-slate-900/50 p-2 rounded border border-slate-700/50"
               >
                 <span>{new Date(e.date).toLocaleDateString()}</span>
                 <span>{e.weight}kg / {e.body_fat_pct}% BF</span>
