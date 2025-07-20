@@ -4,7 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
 const ProgressPhotos = () => {
   const [user, setUser] = useState(null);
@@ -20,12 +23,13 @@ const ProgressPhotos = () => {
   }, []);
 
   useEffect(() => {
-    if (user?.is_paid) {
+    if (user?.is_paid && supabase) {
       loadPhotos();
     }
   }, [user]);
 
   async function loadPhotos() {
+    if (!supabase || !user) return;
     try {
       const { data, error } = await supabase.storage
         .from('progress_photos')
@@ -43,6 +47,7 @@ const ProgressPhotos = () => {
     setUploading(true);
     const filePath = `${user.id}/${Date.now()}-${file.name}`;
     try {
+      if (!supabase) throw new Error('Supabase not configured');
       const { error } = await supabase.storage
         .from('progress_photos')
         .upload(filePath, file);
@@ -57,7 +62,7 @@ const ProgressPhotos = () => {
 
   if (!user) return null;
 
-  if (!user.is_paid) {
+  if (!user.is_paid || !supabase) {
     return <p className="text-center">Upgrade to upload progress photos.</p>;
   }
 
@@ -67,7 +72,7 @@ const ProgressPhotos = () => {
       <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} />
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
         {photos.map((p) => {
-          const url = supabase.storage
+          const url = supabase?.storage
             .from('progress_photos')
             .getPublicUrl(`${user.id}/${p.name}`).data.publicUrl;
           return <img key={p.name} src={url} alt="Progress" className="rounded" />;
