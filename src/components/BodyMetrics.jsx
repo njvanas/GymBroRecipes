@@ -4,7 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
 const BodyMetrics = () => {
   const [user, setUser] = useState(null);
@@ -32,7 +35,7 @@ const BodyMetrics = () => {
   }, [user]);
 
   const loadEntries = async () => {
-    if (!user || !user.is_paid) {
+    if (!user || !user.is_paid || !supabase) {
       const local = (await get('body_metrics')) || [];
       setEntries(local);
     } else {
@@ -59,7 +62,7 @@ const BodyMetrics = () => {
       arms: Number(arms) || 0,
       thighs: Number(thighs) || 0,
     };
-    if (!user || !user.is_paid) {
+    if (!user || !user.is_paid || !supabase) {
       const existing = (await get('body_metrics')) || [];
       await set('body_metrics', [...existing, entry]);
     } else {

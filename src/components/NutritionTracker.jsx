@@ -4,7 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
 const TARGETS = {
   calories: 2000,
@@ -72,7 +75,7 @@ const NutritionTracker = () => {
       meals,
       ...totals,
     };
-    if (!user || !user.is_paid) {
+    if (!user || !user.is_paid || !supabase) {
       const existing = (await get('nutrition_logs')) || [];
       await set('nutrition_logs', [...existing, log]);
       alert('Nutrition log saved locally');

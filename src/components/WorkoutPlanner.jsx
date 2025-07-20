@@ -4,7 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
 const exercisesList = [
   'Bench Press',
@@ -79,7 +82,7 @@ const WorkoutPlanner = () => {
       date: new Date().toISOString(),
       exercises,
     };
-    if (!user || !user.is_paid) {
+    if (!user || !user.is_paid || !supabase) {
       const existing = (await get('workouts')) || [];
       await set('workouts', [...existing, workout]);
       alert('Workout saved locally');

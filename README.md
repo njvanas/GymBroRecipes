@@ -13,7 +13,9 @@ Ultimate Fitness Tracker is an offline‑first progressive web app (PWA) for log
 ## Local Setup
 1. Clone this repository.
 2. Run `npm install` to install dependencies.
-3. Copy `.env.example` to `.env` and fill in your Supabase and Stripe keys.
+3. Copy `.env.example` to `.env` and fill in your Supabase and Stripe keys. If
+   these values are omitted the app still works offline, but cloud sync features
+   will be disabled.
 4. Start the dev server:
    ```bash
    npm run dev
@@ -28,6 +30,7 @@ The static files will be generated in the `dist` folder.
 
 ### GitHub Pages
 The repository includes a GitHub Actions workflow that publishes `dist` to the `gh-pages` branch whenever you push to `main`.
+Remember to provide `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` during the build if you want cloud sync enabled in the deployed site.
 
 ### Netlify (optional)
 If you prefer Netlify, connect the repo in your Netlify dashboard or deploy manually with the Netlify CLI:

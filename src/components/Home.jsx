@@ -4,7 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase =
+  supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -16,7 +19,7 @@ const Home = () => {
       const u = stored || { is_paid: false };
       setUser(u);
 
-      if (!u.is_paid) {
+      if (!u.is_paid || !supabase) {
         const workouts = (await get('workouts')) || [];
         const meals = (await get('nutrition_logs')) || [];
         const metrics = (await get('body_metrics')) || [];
