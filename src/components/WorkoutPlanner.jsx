@@ -100,7 +100,9 @@ const WorkoutPlanner = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">Workout Planner</h2>
+      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 text-center">
+        Workout Planner
+      </h2>
 
       <div className="space-y-2 mb-6">
         <div>

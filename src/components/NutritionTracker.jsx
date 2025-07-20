@@ -93,7 +93,9 @@ const NutritionTracker = () => {
 
   return (
     <div className="max-w-xl mx-auto space-y-4 dark:text-white">
-      <h2 className="text-xl font-semibold">Nutrition Tracker</h2>
+      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 text-center">
+        Nutrition Tracker
+      </h2>
       <div className="grid grid-cols-5 gap-2">
         <input
           type="text"
