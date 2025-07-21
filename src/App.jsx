@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { get } from 'idb-keyval';
+import { ToastProvider } from './components/ui/Toast';
+import { TopNavigation, BottomNavigation } from './components/ui/Navigation';
+import { 
+  HomeIcon, 
+  WorkoutIcon, 
+  NutritionIcon, 
+  WaterIcon, 
+  MetricsIcon, 
+  PhotosIcon, 
+  StatsIcon 
+} from './components/ui/icons';
 import Home from './components/Home';
 import WorkoutPlanner from './components/WorkoutPlanner';
 import NutritionTracker from './components/NutritionTracker';
@@ -10,7 +21,17 @@ import Stats from './components/Stats';
 import WaterTracker from './components/WaterTracker';
 import UpgradeBanner from './components/UpgradeBanner';
 import AddToHomeScreen from './components/AddToHomeScreen';
-import Link from './components/ui/Link';
+import { PageLoader } from './components/ui/LoadingSpinner';
+
+const navigationItems = [
+  { to: '/', icon: HomeIcon, label: 'Home' },
+  { to: '/workout', icon: WorkoutIcon, label: 'Workouts' },
+  { to: '/nutrition', icon: NutritionIcon, label: 'Nutrition' },
+  { to: '/water', icon: WaterIcon, label: 'Water' },
+  { to: '/metrics', icon: MetricsIcon, label: 'Metrics' },
+  { to: '/photos', icon: PhotosIcon, label: 'Photos' },
+  { to: '/stats', icon: StatsIcon, label: 'Stats' },
+];
 
 function App() {
   const [user, setUser] = useState(null);
@@ -18,59 +39,81 @@ function App() {
 
   useEffect(() => {
     async function fetchUser() {
-      const stored = await get('user');
-      setUser(stored || { is_paid: false });
-      setLoading(false);
+      try {
+        const stored = await get('user');
+        setUser(stored || { is_paid: false });
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        setUser({ is_paid: false });
+      } finally {
+        setLoading(false);
+      }
     }
     fetchUser();
   }, []);
 
   if (loading) {
-    return (
-      <div className="text-center p-4 text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
-        Loading...
-      </div>
-    );
+    return <PageLoader />;
   }
 
   return (
-    <Router basename={import.meta.env.BASE_URL}>
-      <div className="min-h-screen flex flex-col">
-        <header className="sticky top-0 z-10 bg-slate-900/50 backdrop-blur">
-          <div className="container mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <h1 className="text-3xl font-bold md:text-4xl text-white">GymBroRecipes</h1>
-            <nav className="flex flex-wrap justify-center gap-2">
-              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/">Home</Link>
-              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/workout">Workouts</Link>
-              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/nutrition">Nutrition</Link>
-              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/water">Water</Link>
-              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/metrics">Metrics</Link>
-              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/photos">Photos</Link>
-              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/stats">Stats</Link>
-            </nav>
-          </div>
-        </header>
+    <ToastProvider>
+      <Router basename={import.meta.env.BASE_URL}>
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-slate-900">
+          {/* Header */}
+          <header className="sticky top-0 z-30 glass-effect border-b border-gray-200/20 dark:border-gray-700/20">
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="text-center sm:text-left">
+                  <h1 className="text-2xl md:text-3xl font-bold text-gradient">
+                    GymBroRecipes
+                  </h1>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Your fitness journey starts here
+                  </p>
+                </div>
+                
+                {/* Desktop Navigation */}
+                <div className="hidden sm:block">
+                  <TopNavigation items={navigationItems} />
+                </div>
+              </div>
+            </div>
+          </header>
 
-        <UpgradeBanner />
-        <AddToHomeScreen />
+          {/* Upgrade Banner */}
+          <UpgradeBanner />
+          
+          {/* Add to Home Screen Prompt */}
+          <AddToHomeScreen />
 
-        <main className="flex-1 container mx-auto px-6 py-10">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/workout" element={<WorkoutPlanner />} />
-            <Route path="/nutrition" element={<NutritionTracker />} />
-            <Route path="/water" element={<WaterTracker />} />
-            <Route path="/metrics" element={<BodyMetrics />} />
-            <Route path="/photos" element={<ProgressPhotos />} />
-            <Route path="/stats" element={<Stats />} />
-          </Routes>
-        </main>
+          {/* Main Content */}
+          <main className="flex-1 container mx-auto px-4 py-6 pb-20 sm:pb-6">
+            <div className="animate-fade-in">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/workout" element={<WorkoutPlanner />} />
+                <Route path="/nutrition" element={<NutritionTracker />} />
+                <Route path="/water" element={<WaterTracker />} />
+                <Route path="/metrics" element={<BodyMetrics />} />
+                <Route path="/photos" element={<ProgressPhotos />} />
+                <Route path="/stats" element={<Stats />} />
+              </Routes>
+            </div>
+          </main>
 
-        <footer className="bg-slate-900/50 dark:bg-gray-900/50 text-gray-400 dark:text-gray-400 text-center py-4">
-          &copy; {new Date().getFullYear()} GymBroRecipes
-        </footer>
-      </div>
-    </Router>
+          {/* Mobile Bottom Navigation */}
+          <BottomNavigation items={navigationItems} />
+
+          {/* Footer */}
+          <footer className="hidden sm:block bg-white/50 dark:bg-gray-900/50 border-t border-gray-200/20 dark:border-gray-700/20 text-center py-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              &copy; {new Date().getFullYear()} GymBroRecipes - Track. Progress. Achieve.
+            </p>
+          </footer>
+        </div>
+      </Router>
+    </ToastProvider>
   );
 }
 

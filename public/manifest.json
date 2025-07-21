@@ -1,20 +1,62 @@
 {
-  "name": "GymBroRecipes",
-  "short_name": "GymBro",
+  "name": "GymBroRecipes - Fitness Tracker",
+  "short_name": "GymBroRecipes",
+  "description": "Track workouts, nutrition, and body metrics with this comprehensive fitness app",
   "start_url": ".",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#0f172a",
-  "theme_color": "#1e293b",
+  "theme_color": "#3b82f6",
+  "categories": ["health", "fitness", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     {
       "src": "icons/192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icons/512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "icons/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Log Workout",
+      "short_name": "Workout",
+      "description": "Quickly log a new workout",
+      "url": "/workout",
+      "icons": [
+        {
+          "src": "icons/192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Track Nutrition",
+      "short_name": "Nutrition",
+      "description": "Log meals and track calories",
+      "url": "/nutrition",
+      "icons": [
+        {
+          "src": "icons/192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
 }

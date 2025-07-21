@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { get } from 'idb-keyval';
+import Button from './ui/Button';
+import { useToast } from './ui/Toast';
 
 const UpgradeBanner = () => {
   const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     const checkTier = async () => {
       const stored = await get('user');
-      if (!stored || stored.is_paid === false) {
+      const isDismissed = localStorage.getItem('upgrade-banner-dismissed') === 'true';
+      
+      if ((!stored || stored.is_paid === false) && !isDismissed) {
         setVisible(true);
       }
     };
@@ -15,28 +21,41 @@ const UpgradeBanner = () => {
   }, []);
 
   const handleUpgrade = () => {
-    // TODO: Replace with Stripe/PayPal checkout
-    alert('Redirecting to payment flow...');
+    toast.info('Upgrade feature coming soon! Cloud sync will enable automatic backups and multi-device access.', 'Coming Soon');
   };
 
-  if (!visible) return null;
+  const handleDismiss = () => {
+    setVisible(false);
+    setDismissed(true);
+    localStorage.setItem('upgrade-banner-dismissed', 'true');
+  };
+
+  if (!visible || dismissed) return null;
 
   return (
-    <div className="bg-blue-600/20 text-blue-400 p-4 text-center">
-      <p className="mb-2">Upgrade to enable cloud sync and automatic backups.</p>
-      <div className="space-x-2">
-        <button
-          onClick={handleUpgrade}
-          className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-300 shadow-lg hover:shadow-xl"
-        >
-          Upgrade Now
-        </button>
-        <button
-          onClick={() => setVisible(false)}
-          className="text-sm underline text-gray-300"
-        >
-          Dismiss
-        </button>
+    <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border-b border-blue-200/20 dark:border-blue-800/20 animate-slide-up">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-center sm:text-left">
+            <p className="text-blue-800 dark:text-blue-200 font-medium">
+              ✨ Unlock cloud sync and automatic backups
+            </p>
+            <p className="text-sm text-blue-600 dark:text-blue-300">
+              Access your data across all devices with secure cloud storage
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button onClick={handleUpgrade} size="sm">
+              Upgrade Now
+            </Button>
+            <button
+              onClick={handleDismiss}
+              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 underline transition-colors"
+            >
+              Maybe later
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
