@@ -183,7 +183,7 @@ const WorkoutPlanner = () => {
           <CardHeader>
             <h2 className="text-xl font-semibold md:text-2xl">Workout Log</h2>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-x-auto">
             <ul className="space-y-2">
               {exercises.map((ex, idx) => (
                 <li
