@@ -7,6 +7,7 @@ import NutritionTracker from './components/NutritionTracker';
 import BodyMetrics from './components/BodyMetrics';
 import ProgressPhotos from './components/ProgressPhotos';
 import Stats from './components/Stats';
+import WaterTracker from './components/WaterTracker';
 import UpgradeBanner from './components/UpgradeBanner';
 import AddToHomeScreen from './components/AddToHomeScreen';
 import Link from './components/ui/Link';
@@ -42,6 +43,7 @@ function App() {
               <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/">Home</Link>
               <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/workout">Workouts</Link>
               <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/nutrition">Nutrition</Link>
+              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/water">Water</Link>
               <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/metrics">Metrics</Link>
               <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/photos">Photos</Link>
               <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/stats">Stats</Link>
@@ -57,6 +59,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/workout" element={<WorkoutPlanner />} />
             <Route path="/nutrition" element={<NutritionTracker />} />
+            <Route path="/water" element={<WaterTracker />} />
             <Route path="/metrics" element={<BodyMetrics />} />
             <Route path="/photos" element={<ProgressPhotos />} />
             <Route path="/stats" element={<Stats />} />

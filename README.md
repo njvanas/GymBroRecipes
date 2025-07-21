@@ -5,6 +5,7 @@ Ultimate Fitness Tracker is an offline‑first progressive web app (PWA) for log
 ## Features
 - Plan and log workouts
 - Track macros and meals
+- Log daily water intake
 - Record body metrics like weight and body fat
 - View progress charts
 - Installable PWA that works offline
