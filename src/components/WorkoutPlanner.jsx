@@ -5,8 +5,11 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Label from './ui/Label';
 import { Card, CardHeader, CardContent } from './ui/Card';
+import { WorkoutIcon, PlusIcon, EditIcon, DeleteIcon, SearchIcon } from './ui/icons';
 import TrainingMetrics from './TrainingMetrics';
 import ExerciseSearch from './ExerciseSearch';
+import { useToast } from './ui/Toast';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -21,6 +24,11 @@ const exercisesList = [
   'Deadlift',
   'Overhead Press',
   'Pull Up',
+  'Barbell Row',
+  'Dumbbell Press',
+  'Leg Press',
+  'Lat Pulldown',
+  'Shoulder Press',
 ];
 
 const WorkoutPlanner = () => {
@@ -33,14 +41,24 @@ const WorkoutPlanner = () => {
   const [exercises, setExercises] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     async function loadUser() {
-      const stored = await get('user');
-      setUser(stored || { is_paid: false });
+      try {
+        const stored = await get('user');
+        setUser(stored || { is_paid: false });
+      } catch (error) {
+        console.error('Error loading user:', error);
+        toast.error('Failed to load user data');
+      } finally {
+        setLoading(false);
+      }
     }
     loadUser();
-  }, []);
+  }, [toast]);
 
   const resetForm = () => {
     setSelectedExercise(exercisesList[0]);
@@ -54,22 +72,31 @@ const WorkoutPlanner = () => {
   const handleSelectFromSearch = (exercise) => {
     setSelectedExercise(exercise.name);
     setShowSearch(false);
+    toast.success(`Added ${exercise.name} to selection`);
   };
 
   const addExercise = () => {
+    if (!sets || !reps) {
+      toast.error('Please fill in sets and reps');
+      return;
+    }
+
     const newEntry = {
       exercise: selectedExercise,
-      sets,
-      reps,
-      weight,
-      rpe,
+      sets: Number(sets),
+      reps: Number(reps),
+      weight: Number(weight) || 0,
+      rpe: Number(rpe) || 0,
     };
+
     if (editIndex !== null) {
       const updated = [...exercises];
       updated[editIndex] = newEntry;
       setExercises(updated);
+      toast.success('Exercise updated successfully');
     } else {
       setExercises([...exercises, newEntry]);
+      toast.success('Exercise added to workout');
     }
     resetForm();
   };
@@ -77,50 +104,87 @@ const WorkoutPlanner = () => {
   const handleEdit = (index) => {
     const entry = exercises[index];
     setSelectedExercise(entry.exercise);
-    setSets(entry.sets);
-    setReps(entry.reps);
-    setWeight(entry.weight);
-    setRpe(entry.rpe);
+    setSets(entry.sets.toString());
+    setReps(entry.reps.toString());
+    setWeight(entry.weight.toString());
+    setRpe(entry.rpe.toString());
     setEditIndex(index);
   };
 
   const handleRemove = (index) => {
     const updated = exercises.filter((_, i) => i !== index);
     setExercises(updated);
+    toast.success('Exercise removed from workout');
   };
 
   const saveWorkout = async () => {
+    if (exercises.length === 0) {
+      toast.error('Please add at least one exercise');
+      return;
+    }
+
+    setSaving(true);
     const workout = {
       date: new Date().toISOString(),
       exercises,
     };
-    if (!user || !user.is_paid || !supabase) {
-      const existing = (await get('workouts')) || [];
-      await set('workouts', [...existing, workout]);
-      alert('Workout saved locally');
-    } else {
-      try {
+
+    try {
+      if (!user || !user.is_paid || !supabase) {
+        const existing = (await get('workouts')) || [];
+        await set('workouts', [...existing, workout]);
+        toast.success('Workout saved locally');
+      } else {
         const { error } = await supabase.from('workouts').insert([workout]);
         if (error) throw error;
-        alert('Workout saved to cloud');
-      } catch (err) {
-        console.error('Error saving workout', err);
+        toast.success('Workout saved to cloud');
       }
+      setExercises([]);
+    } catch (err) {
+      console.error('Error saving workout', err);
+      toast.error('Failed to save workout');
+    } finally {
+      setSaving(false);
     }
-    setExercises([]);
   };
 
-  return (
-    <div className="space-y-4">
-      <h1 className="text-3xl font-bold md:text-4xl text-center">Workout Planner</h1>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
 
-      <Card className="mt-4">
-        <CardContent className="space-y-2">
+  return (
+    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl mb-4">
+          <WorkoutIcon className="w-8 h-8 text-white" />
+        </div>
+        <h1 className="text-4xl md:text-5xl font-bold text-gradient">
+          Workout Planner
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          Plan and track your workouts with precision. Log exercises, sets, reps, and weights to monitor your strength progress.
+        </p>
+      </div>
+
+      {/* Exercise Input Form */}
+      <Card className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
+        <CardHeader>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <PlusIcon className="w-6 h-6 text-green-500" />
+            {editIndex !== null ? 'Edit Exercise' : 'Add Exercise'}
+          </h2>
+        </CardHeader>
+        <CardContent className="space-y-6">
           <div>
-            <Label htmlFor="exercise">Exercise</Label>
+            <Label htmlFor="exercise" className="text-base font-semibold mb-2">Exercise</Label>
             <select
               id="exercise"
-              className="w-full border rounded p-2 dark:bg-gray-800"
+              className="input-field text-lg"
               value={selectedExercise}
               onChange={(e) => setSelectedExercise(e.target.value)}
             >
@@ -132,103 +196,153 @@ const WorkoutPlanner = () => {
             </select>
           </div>
 
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Input
               type="number"
-              aria-label="Sets"
-              placeholder="Sets"
+              label="Sets"
+              placeholder="3"
               value={sets}
               onChange={(e) => setSets(e.target.value)}
+              className="text-center text-lg font-semibold"
             />
             <Input
               type="number"
-              aria-label="Reps"
-              placeholder="Reps"
+              label="Reps"
+              placeholder="10"
               value={reps}
               onChange={(e) => setReps(e.target.value)}
+              className="text-center text-lg font-semibold"
             />
             <Input
               type="number"
-              aria-label="Weight"
-              placeholder="Weight"
+              label="Weight (kg)"
+              placeholder="60"
               value={weight}
               onChange={(e) => setWeight(e.target.value)}
+              className="text-center text-lg font-semibold"
             />
             <Input
               type="number"
-              aria-label="RPE"
-              placeholder="RPE"
+              label="RPE (1-10)"
+              placeholder="8"
               value={rpe}
               onChange={(e) => setRpe(e.target.value)}
+              className="text-center text-lg font-semibold"
             />
           </div>
 
-          <Button className="w-full" onClick={addExercise} aria-label="Add Exercise">
-            {editIndex !== null ? 'Update Exercise' : 'Add Exercise'}
-          </Button>
-          <Button
-            className="w-full bg-gray-600 hover:bg-gray-700"
-            onClick={() => setShowSearch((s) => !s)}
-            aria-label="Search exercises"
-          >
-            Search Exercises
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button 
+              onClick={addExercise} 
+              className="flex-1"
+              disabled={!sets || !reps}
+            >
+              <PlusIcon className="w-5 h-5 mr-2" />
+              {editIndex !== null ? 'Update Exercise' : 'Add Exercise'}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setShowSearch(!showSearch)}
+              className="flex-1"
+            >
+              <SearchIcon className="w-5 h-5 mr-2" />
+              Search Exercises
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
-      {showSearch && <ExerciseSearch onSelect={handleSelectFromSearch} />}
+      {/* Exercise Search */}
+      {showSearch && (
+        <div className="animate-slide-up">
+          <ExerciseSearch onSelect={handleSelectFromSearch} />
+        </div>
+      )}
 
+      {/* Current Workout */}
       {exercises.length > 0 && (
-        <Card className="mt-4">
+        <Card className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <CardHeader>
-            <h2 className="text-xl font-semibold md:text-2xl">Workout Log</h2>
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <WorkoutIcon className="w-6 h-6 text-blue-500" />
+              Current Workout ({exercises.length} exercises)
+            </h2>
           </CardHeader>
-          <CardContent className="overflow-x-auto">
-            <ul className="space-y-2">
+          <CardContent>
+            <div className="space-y-3">
               {exercises.map((ex, idx) => (
-                <li
+                <div
                   key={idx}
-                  className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-2 rounded"
+                  className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200"
                 >
-                  <div>
-                    <p className="font-semibold">{ex.exercise}</p>
-                    <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
-                      Sets: {ex.sets} Reps: {ex.reps} Weight: {ex.weight} RPE: {ex.rpe}
-                    </p>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                      {ex.exercise}
+                    </h3>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      <span className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded-lg font-medium">
+                        {ex.sets} sets
+                      </span>
+                      <span className="bg-green-100 dark:bg-green-900 px-2 py-1 rounded-lg font-medium">
+                        {ex.reps} reps
+                      </span>
+                      {ex.weight > 0 && (
+                        <span className="bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded-lg font-medium">
+                          {ex.weight} kg
+                        </span>
+                      )}
+                      {ex.rpe > 0 && (
+                        <span className="bg-orange-100 dark:bg-orange-900 px-2 py-1 rounded-lg font-medium">
+                          RPE {ex.rpe}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="space-x-2">
+                  <div className="flex items-center gap-2">
                     <Button
-                      className="bg-transparent text-blue-600 hover:underline px-2 py-1"
+                      variant="ghost"
+                      size="sm"
                       onClick={() => handleEdit(idx)}
-                      aria-label="Edit exercise"
+                      className="text-blue-600 hover:text-blue-700"
                     >
-                      Edit
+                      <EditIcon className="w-4 h-4" />
                     </Button>
                     <Button
-                      className="bg-transparent text-red-600 hover:underline px-2 py-1"
+                      variant="ghost"
+                      size="sm"
                       onClick={() => handleRemove(idx)}
-                      aria-label="Remove exercise"
+                      className="text-red-600 hover:text-red-700"
                     >
-                      Remove
+                      <DeleteIcon className="w-4 h-4" />
                     </Button>
                   </div>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </CardContent>
         </Card>
       )}
 
-      <TrainingMetrics exercises={exercises} />
+      {/* Training Metrics */}
+      <div className="animate-slide-up" style={{ animationDelay: '0.3s' }}>
+        <TrainingMetrics exercises={exercises} />
+      </div>
 
-      <Button
-        className="bg-green-500 hover:bg-green-600 mt-4"
-        onClick={saveWorkout}
-        disabled={!exercises.length}
-        aria-label="Save Workout"
-      >
-        Save Workout
-      </Button>
+      {/* Save Workout Button */}
+      {exercises.length > 0 && (
+        <div className="text-center animate-slide-up" style={{ animationDelay: '0.4s' }}>
+          <Button
+            variant="success"
+            size="lg"
+            onClick={saveWorkout}
+            loading={saving}
+            className="px-12 py-4 text-lg font-bold shadow-2xl"
+          >
+            <WorkoutIcon className="w-6 h-6 mr-2" />
+            Save Workout
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

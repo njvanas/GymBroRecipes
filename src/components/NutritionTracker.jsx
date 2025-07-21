@@ -3,9 +3,12 @@ import { get, set } from 'idb-keyval';
 import { createClient } from '@supabase/supabase-js';
 import Button from './ui/Button';
 import Input from './ui/Input';
-import Label from './ui/Label';
 import { Card, CardHeader, CardContent } from './ui/Card';
+import { NutritionIcon, PlusIcon, SearchIcon, DeleteIcon, CaloriesIcon } from './ui/icons';
+import ProgressBar from './ui/ProgressBar';
 import FoodSearch from './FoodSearch';
+import { useToast } from './ui/Toast';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -30,14 +33,24 @@ const NutritionTracker = () => {
   const [fats, setFats] = useState('');
   const [meals, setMeals] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     async function loadUser() {
-      const stored = await get('user');
-      setUser(stored || { is_paid: false });
+      try {
+        const stored = await get('user');
+        setUser(stored || { is_paid: false });
+      } catch (error) {
+        console.error('Error loading user:', error);
+        toast.error('Failed to load user data');
+      } finally {
+        setLoading(false);
+      }
     }
     loadUser();
-  }, []);
+  }, [toast]);
 
   const resetForm = () => {
     setMealName('');
@@ -48,6 +61,11 @@ const NutritionTracker = () => {
   };
 
   const addMeal = () => {
+    if (!mealName) {
+      toast.error('Please enter a meal name');
+      return;
+    }
+
     const newMeal = {
       name: mealName,
       calories: Number(calories) || 0,
@@ -56,21 +74,25 @@ const NutritionTracker = () => {
       fats: Number(fats) || 0,
     };
     setMeals([...meals, newMeal]);
+    toast.success(`Added ${mealName} to today's meals`);
     resetForm();
   };
 
   const handleSelectFood = (food) => {
     setMealName(food.name);
-    setCalories(food.calories);
-    setProtein(food.protein);
-    setCarbs(food.carbs);
-    setFats(food.fats);
+    setCalories(food.calories.toString());
+    setProtein(food.protein.toString());
+    setCarbs(food.carbs.toString());
+    setFats(food.fats.toString());
     setShowSearch(false);
+    toast.success(`Selected ${food.name} from database`);
   };
 
   const removeMeal = (index) => {
+    const mealName = meals[index].name;
     const updated = meals.filter((_, i) => i !== index);
     setMeals(updated);
+    toast.success(`Removed ${mealName} from meals`);
   };
 
   const totals = meals.reduce(
@@ -85,145 +107,254 @@ const NutritionTracker = () => {
   );
 
   const saveLogs = async () => {
+    if (meals.length === 0) {
+      toast.error('Please add at least one meal');
+      return;
+    }
+
+    setSaving(true);
     const log = {
       date: new Date().toISOString().split('T')[0],
       meals,
       ...totals,
     };
-    if (!user || !user.is_paid || !supabase) {
-      const existing = (await get('nutrition_logs')) || [];
-      await set('nutrition_logs', [...existing, log]);
-      alert('Nutrition log saved locally');
-    } else {
-      try {
+
+    try {
+      if (!user || !user.is_paid || !supabase) {
+        const existing = (await get('nutrition_logs')) || [];
+        await set('nutrition_logs', [...existing, log]);
+        toast.success('Nutrition log saved locally');
+      } else {
         const { error } = await supabase.from('nutrition_logs').insert([log]);
         if (error) throw error;
-        alert('Nutrition log saved to cloud');
-      } catch (err) {
-        console.error('Error saving log', err);
+        toast.success('Nutrition log saved to cloud');
       }
+      setMeals([]);
+    } catch (err) {
+      console.error('Error saving log', err);
+      toast.error('Failed to save nutrition log');
+    } finally {
+      setSaving(false);
     }
-    setMeals([]);
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-xl mx-auto space-y-4">
-      <h1 className="text-3xl font-bold md:text-4xl text-center">Nutrition Tracker</h1>
-      <Card className="mt-4">
-        <CardContent className="grid grid-cols-5 gap-2">
-          <Input
-            type="text"
-            aria-label="Meal"
-            placeholder="Meal"
-            value={mealName}
-            onChange={(e) => setMealName(e.target.value)}
-            className="col-span-2"
-          />
-          <Input
-            type="number"
-            aria-label="Calories"
-            placeholder="Cal"
-            value={calories}
-            onChange={(e) => setCalories(e.target.value)}
-          />
-          <Input
-            type="number"
-            aria-label="Protein"
-            placeholder="Protein"
-            value={protein}
-            onChange={(e) => setProtein(e.target.value)}
-          />
-          <Input
-            type="number"
-            aria-label="Carbs"
-            placeholder="Carbs"
-            value={carbs}
-            onChange={(e) => setCarbs(e.target.value)}
-          />
-          <Input
-            type="number"
-            aria-label="Fats"
-            placeholder="Fats"
-            value={fats}
-            onChange={(e) => setFats(e.target.value)}
-          />
-        </CardContent>
-      </Card>
-      <div className="flex space-x-2">
-        <Button className="flex-1" onClick={addMeal} disabled={!mealName} aria-label="Add Meal">
-          Add Meal
-        </Button>
-        <Button
-          className="flex-1 bg-gray-600 hover:bg-gray-700"
-          onClick={() => setShowSearch((s) => !s)}
-          aria-label="Search food database"
-        >
-          Search Food
-        </Button>
+    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl mb-4">
+          <NutritionIcon className="w-8 h-8 text-white" />
+        </div>
+        <h1 className="text-4xl md:text-5xl font-bold text-gradient">
+          Nutrition Tracker
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          Track your daily nutrition intake. Log meals, monitor calories and macros to achieve your health goals.
+        </p>
       </div>
 
+      {/* Meal Input Form */}
+      <Card className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
+        <CardHeader>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <PlusIcon className="w-6 h-6 text-orange-500" />
+            Add Meal
+          </h2>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              type="text"
+              label="Meal Name"
+              placeholder="e.g., Grilled Chicken Breast"
+              value={mealName}
+              onChange={(e) => setMealName(e.target.value)}
+              className="md:col-span-2"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Input
+              type="number"
+              label="Calories"
+              placeholder="250"
+              value={calories}
+              onChange={(e) => setCalories(e.target.value)}
+              className="text-center text-lg font-semibold"
+            />
+            <Input
+              type="number"
+              label="Protein (g)"
+              placeholder="25"
+              value={protein}
+              onChange={(e) => setProtein(e.target.value)}
+              className="text-center text-lg font-semibold"
+            />
+            <Input
+              type="number"
+              label="Carbs (g)"
+              placeholder="30"
+              value={carbs}
+              onChange={(e) => setCarbs(e.target.value)}
+              className="text-center text-lg font-semibold"
+            />
+            <Input
+              type="number"
+              label="Fats (g)"
+              placeholder="10"
+              value={fats}
+              onChange={(e) => setFats(e.target.value)}
+              className="text-center text-lg font-semibold"
+            />
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button 
+              onClick={addMeal} 
+              className="flex-1"
+              disabled={!mealName}
+            >
+              <PlusIcon className="w-5 h-5 mr-2" />
+              Add Meal
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setShowSearch(!showSearch)}
+              className="flex-1"
+            >
+              <SearchIcon className="w-5 h-5 mr-2" />
+              Search Food Database
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Food Search */}
+      {showSearch && (
+        <div className="animate-slide-up">
+          <FoodSearch onSelect={handleSelectFood} />
+        </div>
+      )}
+
+      {/* Daily Progress */}
+      <Card className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
+        <CardHeader>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <CaloriesIcon className="w-6 h-6 text-blue-500" />
+            Daily Progress
+          </h2>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <ProgressBar
+                value={totals.calories}
+                max={TARGETS.calories}
+                label={`Calories: ${totals.calories} / ${TARGETS.calories}`}
+                color="yellow"
+                showLabel
+              />
+              <ProgressBar
+                value={totals.protein}
+                max={TARGETS.protein}
+                label={`Protein: ${totals.protein}g / ${TARGETS.protein}g`}
+                color="red"
+                showLabel
+              />
+            </div>
+            <div className="space-y-4">
+              <ProgressBar
+                value={totals.carbs}
+                max={TARGETS.carbs}
+                label={`Carbs: ${totals.carbs}g / ${TARGETS.carbs}g`}
+                color="blue"
+                showLabel
+              />
+              <ProgressBar
+                value={totals.fats}
+                max={TARGETS.fats}
+                label={`Fats: ${totals.fats}g / ${TARGETS.fats}g`}
+                color="purple"
+                showLabel
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Today's Meals */}
       {meals.length > 0 && (
-        <Card className="mt-4">
+        <Card className="animate-slide-up" style={{ animationDelay: '0.3s' }}>
           <CardHeader>
-            <h2 className="text-xl font-semibold md:text-2xl">Today's Meals</h2>
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <NutritionIcon className="w-6 h-6 text-green-500" />
+              Today's Meals ({meals.length})
+            </h2>
           </CardHeader>
-          <CardContent className="overflow-x-auto">
-            <ul className="space-y-1">
+          <CardContent>
+            <div className="space-y-3">
               {meals.map((meal, idx) => (
-                <li
+                <div
                   key={idx}
-                  className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-2 rounded"
+                  className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200"
                 >
-                  <div>
-                    <p className="font-semibold">{meal.name}</p>
-                    <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
-                      {meal.calories} kcal | P {meal.protein} | C {meal.carbs} | F {meal.fats}
-                    </p>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                      {meal.name}
+                    </h3>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      <span className="bg-yellow-100 dark:bg-yellow-900 px-2 py-1 rounded-lg font-medium">
+                        {meal.calories} kcal
+                      </span>
+                      <span className="bg-red-100 dark:bg-red-900 px-2 py-1 rounded-lg font-medium">
+                        P: {meal.protein}g
+                      </span>
+                      <span className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded-lg font-medium">
+                        C: {meal.carbs}g
+                      </span>
+                      <span className="bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded-lg font-medium">
+                        F: {meal.fats}g
+                      </span>
+                    </div>
                   </div>
                   <Button
-                    className="bg-transparent text-red-600 dark:text-red-400 hover:underline px-2 py-1"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => removeMeal(idx)}
-                    aria-label="Remove meal"
+                    className="text-red-600 hover:text-red-700"
                   >
-                    Remove
+                    <DeleteIcon className="w-4 h-4" />
                   </Button>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </CardContent>
         </Card>
       )}
 
-      {showSearch && <FoodSearch onSelect={handleSelectFood} />}
-
-      <Card className="mt-4">
-        <CardHeader>
-          <h2 className="text-xl font-semibold md:text-2xl">Daily Totals</h2>
-        </CardHeader>
-        <CardContent>
-          <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
-            Calories: {totals.calories}/{TARGETS.calories}
-          </p>
-          <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
-            Protein: {totals.protein}g/{TARGETS.protein}g
-          </p>
-          <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
-            Carbs: {totals.carbs}g/{TARGETS.carbs}g
-          </p>
-          <p className="text-base md:text-lg leading-relaxed text-gray-700 dark:text-gray-100">
-            Fats: {totals.fats}g/{TARGETS.fats}g
-          </p>
-        </CardContent>
-      </Card>
-
-      <Button
-        className="bg-green-500 hover:bg-green-600 mt-4 w-full"
-        onClick={saveLogs}
-        disabled={!meals.length}
-        aria-label="Save Log"
-      >
-        Save Log
-      </Button>
+      {/* Save Button */}
+      {meals.length > 0 && (
+        <div className="text-center animate-slide-up" style={{ animationDelay: '0.4s' }}>
+          <Button
+            variant="success"
+            size="lg"
+            onClick={saveLogs}
+            loading={saving}
+            className="px-12 py-4 text-lg font-bold shadow-2xl"
+          >
+            <NutritionIcon className="w-6 h-6 mr-2" />
+            Save Nutrition Log
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

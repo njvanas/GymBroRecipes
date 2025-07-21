@@ -21,6 +21,7 @@ import Stats from './components/Stats';
 import WaterTracker from './components/WaterTracker';
 import UpgradeBanner from './components/UpgradeBanner';
 import AddToHomeScreen from './components/AddToHomeScreen';
+import ExportImport from './components/ExportImport';
 import { PageLoader } from './components/ui/LoadingSpinner';
 
 const navigationItems = [
@@ -31,6 +32,11 @@ const navigationItems = [
   { to: '/metrics', icon: MetricsIcon, label: 'Metrics' },
   { to: '/photos', icon: PhotosIcon, label: 'Photos' },
   { to: '/stats', icon: StatsIcon, label: 'Stats' },
+  { to: '/export', icon: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+    </svg>
+  ), label: 'Export' },
 ];
 
 function App() {
@@ -98,6 +104,7 @@ function App() {
                 <Route path="/metrics" element={<BodyMetrics />} />
                 <Route path="/photos" element={<ProgressPhotos />} />
                 <Route path="/stats" element={<Stats />} />
+                <Route path="/export" element={<ExportImport />} />
               </Routes>
             </div>
           </main>
