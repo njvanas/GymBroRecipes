@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { get } from 'idb-keyval';
 import { createClient } from '@supabase/supabase-js';
 import { Card, CardContent, MetricCard } from './ui/Card';
@@ -15,6 +16,7 @@ const supabase =
     : null;
 
 const Home = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState({ workouts: 0, meals: 0, metrics: 0, water: 0 });
   const [todayStats, setTodayStats] = useState({ calories: 0, water: 0, workouts: 0 });
@@ -78,6 +80,29 @@ const Home = () => {
 
   const handleUpgrade = () => {
     toast.info('Upgrade feature coming soon!', 'Cloud Sync');
+  };
+
+  const handleQuickAction = (action) => {
+    switch (action) {
+      case 'workout':
+        navigate('/workout');
+        toast.info('Ready to log your workout!');
+        break;
+      case 'meal':
+        navigate('/nutrition');
+        toast.info('Time to track your nutrition!');
+        break;
+      case 'water':
+        navigate('/water');
+        toast.info('Stay hydrated!');
+        break;
+      case 'weight':
+        navigate('/metrics');
+        toast.info('Track your progress!');
+        break;
+      default:
+        break;
+    }
   };
 
   if (loading) {
@@ -207,19 +232,35 @@ const Home = () => {
         <CardContent>
           <h3 className="text-2xl font-bold mb-6 text-center">Quick Actions</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button variant="secondary" className="h-20 flex-col gap-2">
+            <Button 
+              variant="secondary" 
+              className="h-20 flex-col gap-2 hover:scale-105 transition-transform"
+              onClick={() => handleQuickAction('workout')}
+            >
               <WorkoutIcon className="w-6 h-6" />
               <span>Log Workout</span>
             </Button>
-            <Button variant="secondary" className="h-20 flex-col gap-2">
+            <Button 
+              variant="secondary" 
+              className="h-20 flex-col gap-2 hover:scale-105 transition-transform"
+              onClick={() => handleQuickAction('meal')}
+            >
               <CaloriesIcon className="w-6 h-6" />
               <span>Add Meal</span>
             </Button>
-            <Button variant="secondary" className="h-20 flex-col gap-2">
+            <Button 
+              variant="secondary" 
+              className="h-20 flex-col gap-2 hover:scale-105 transition-transform"
+              onClick={() => handleQuickAction('water')}
+            >
               <WaterIcon className="w-6 h-6" />
               <span>Log Water</span>
             </Button>
-            <Button variant="secondary" className="h-20 flex-col gap-2">
+            <Button 
+              variant="secondary" 
+              className="h-20 flex-col gap-2 hover:scale-105 transition-transform"
+              onClick={() => handleQuickAction('weight')}
+            >
               <WeightIcon className="w-6 h-6" />
               <span>Record Weight</span>
             </Button>
