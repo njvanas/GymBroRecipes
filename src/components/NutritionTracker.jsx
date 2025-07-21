@@ -167,7 +167,7 @@ const NutritionTracker = () => {
           <CardHeader>
             <h2 className="text-xl font-semibold md:text-2xl">Today's Meals</h2>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-x-auto">
             <ul className="space-y-1">
               {meals.map((meal, idx) => (
                 <li

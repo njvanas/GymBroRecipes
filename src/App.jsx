@@ -8,6 +8,7 @@ import BodyMetrics from './components/BodyMetrics';
 import ProgressPhotos from './components/ProgressPhotos';
 import Stats from './components/Stats';
 import UpgradeBanner from './components/UpgradeBanner';
+import AddToHomeScreen from './components/AddToHomeScreen';
 import Link from './components/ui/Link';
 
 function App() {
@@ -35,20 +36,21 @@ function App() {
     <Router basename={import.meta.env.BASE_URL}>
       <div className="min-h-screen flex flex-col">
         <header className="sticky top-0 z-10 bg-slate-900/50 backdrop-blur">
-          <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="container mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <h1 className="text-3xl font-bold md:text-4xl text-white">GymBroRecipes</h1>
-            <nav className="space-x-4">
-              <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/">Home</Link>
-              <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/workout">Workouts</Link>
-              <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/nutrition">Nutrition</Link>
-              <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/metrics">Metrics</Link>
-              <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/photos">Photos</Link>
-              <Link className="text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/stats">Stats</Link>
+            <nav className="flex flex-wrap justify-center gap-2">
+              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/">Home</Link>
+              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/workout">Workouts</Link>
+              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/nutrition">Nutrition</Link>
+              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/metrics">Metrics</Link>
+              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/photos">Photos</Link>
+              <Link className="text-sm sm:text-base font-medium text-gray-300 hover:text-blue-400 transition-colors" to="/stats">Stats</Link>
             </nav>
           </div>
         </header>
 
         <UpgradeBanner />
+        <AddToHomeScreen />
 
         <main className="flex-1 container mx-auto px-6 py-10">
           <Routes>

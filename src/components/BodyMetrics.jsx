@@ -171,7 +171,7 @@ const BodyMetrics = () => {
               <option value="30">Last 30 days</option>
             </select>
           </CardHeader>
-          <CardContent>
+          <CardContent className="overflow-x-auto">
             <ul className="space-y-1">
               {filteredEntries.map((e, idx) => (
                 <li
