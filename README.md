@@ -1,6 +1,6 @@
-# Ultimate Fitness Tracker
+# GymBroRecipes
 
-Ultimate Fitness Tracker is an offline‑first progressive web app (PWA) for logging workouts, tracking nutrition and monitoring body metrics. All data is saved locally in your browser using IndexedDB. Paying users can optionally sync their data to the cloud via Supabase for backup and multi‑device access.
+GymBroRecipes is an offline‑first progressive web app (PWA) for logging workouts, tracking nutrition and monitoring body metrics. All data is saved locally in your browser using IndexedDB. Paying users can optionally sync their data to the cloud via Supabase for backup and multi‑device access.
 
 ## Features
 - Plan and log workouts
