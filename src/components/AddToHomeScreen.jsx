@@ -71,7 +71,7 @@ const AddToHomeScreen = () => {
               {isIOS ? (
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
                   Tap the share button <span className="inline-block">📤</span> in Safari, 
-                  then "Add to Home Screen" for the best experience.
+                  then "Add to Home Screen\" for the best experience.
                 </p>
               ) : (
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
